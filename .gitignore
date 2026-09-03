@@ -1,0 +1,31 @@
+# Variables locales y secretos
+.env
+.env.*
+!.env.example
+
+# Datos y registros generados por Docker
+data/
+logs/
+*.log
+
+# Artefactos y despliegues locales
+projects/java/deployments/*
+!projects/java/deployments/.gitkeep
+docker/java/jboss-as-7.1.1/jboss-as-7.1.1.Final/
+*.war
+*.ear
+
+# Certificados, claves y archivos de respaldo
+*.pem
+*.key
+*.p12
+*.pfx
+*.bak
+*.sql.gz
+
+# Archivos del sistema y entornos de desarrollo
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
