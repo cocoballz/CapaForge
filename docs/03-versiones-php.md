@@ -18,4 +18,10 @@ Recomendaciones para desarrollo local:
 - `log_errors=On`: conserva errores en registros del servicio.
 - Xdebug: habilitarlo solo en la versión y proyecto que se esté depurando, porque añade consumo y latencia.
 
-PHP 5.3 y PHP 7.1 son perfiles de compatibilidad. Deben mantenerse aislados y no usarse para un despliegue productivo nuevo.
+PHP 5.3, PHP 5.6 y PHP 7.1 son perfiles de compatibilidad. Deben mantenerse aislados y no usarse para un despliegue productivo nuevo.
+
+## Añadir una versión
+
+Para incorporar una versión se crea un servicio nuevo en `compose.yaml`, una carpeta `docker/php/php-fpm-X.Y/` con su `php.ini`, y un VirtualHost de Apache/Nginx si se requiere acceso HTTP.
+
+PHP 5.6 se incluye como referencia con el perfil `php56` y la imagen definida por `PHP56_IMAGE` en `.env`.

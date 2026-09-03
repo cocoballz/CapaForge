@@ -18,7 +18,7 @@ docker compose --profile php53 --profile php71 --profile php81 up -d
 ```powershell
 docker compose logs -f nginx
 docker compose logs -f apache
-docker compose logs -f php8
+docker compose logs -f php-fpm-8.5
 ```
 
 ## Detención

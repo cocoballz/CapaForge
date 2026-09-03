@@ -5,6 +5,7 @@ Docker no instala un sistema operativo completo por servicio; cada contenedor us
 | Servicio | Imagen actual | Base Linux esperada | Estado |
 |---|---|---|---|
 | PHP 5.3 | `devilbox/php-fpm-5.3:latest` | Imagen comunitaria heredada | Solo compatibilidad local |
+| PHP 5.6 | `devilbox/php-fpm:5.6-prod` | Imagen comunitaria heredada | Solo compatibilidad local |
 | PHP 7.1 | `php:7.1-fpm-alpine` | Alpine Linux | Legado |
 | PHP 7.4 | `php:7.4-fpm-alpine` | Alpine Linux | Legado |
 | PHP 8.1 | `php:8.1-fpm-alpine` | Alpine Linux | Compatibilidad |
@@ -27,3 +28,9 @@ Al crear el entorno no se copian proyectos ni datos reales. Docker crea:
 - Usuarios y bases locales definidos en `.env`.
 
 Las imágenes contienen el software; los volúmenes contienen los datos que sobreviven al reinicio. Los archivos fuente se leen desde `PROJECTS_ROOT` y siguen siendo propiedad de Windows.
+
+## Fijar versiones de datos
+
+Las variables `POSTGRES_IMAGE`, `MYSQL_IMAGE` y `REDIS_IMAGE` en `.env` determinan qué imagen usa el entorno. Para pruebas iniciales se usan versiones mayores mantenidas. Cuando un equipo haya validado una combinación, puede reemplazar la etiqueta por una versión menor exacta o por un digest de Docker para obtener una ejecución idéntica entre máquinas.
+
+No cambie una versión mayor de Postgres o MySQL sobre el mismo volumen. Para una actualización mayor cree un volumen nuevo y migre mediante respaldo y restauración.

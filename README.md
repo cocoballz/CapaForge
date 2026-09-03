@@ -64,7 +64,7 @@ Consulte [Proyectos y rutas](docs/02-proyectos-y-rutas.md) para la convención `
 | Grupo | Servicios | Perfil de Compose |
 |---|---|---|
 | Web | Nginx, Apache | `web`, `apache` |
-| PHP | PHP-FPM 5.3, 7.1, 7.4, 8.1 y 8.5 | `php53`, `php71`, `php7`, `php81`, `php8` |
+| PHP | PHP-FPM 5.3, 5.6, 7.1, 7.4, 8.1 y 8.5 | `php53`, `php56`, `php71`, `php7`, `php81`, `php8` |
 | Datos | Postgres 16, MySQL 8.4, Redis 7 | `data` |
 | Herramientas | Workspace Alpine | `workspace` |
 | Java moderno | WildFly 35 con JDK 17 | `java` |
@@ -78,6 +78,9 @@ docker compose --profile php53 up -d
 
 # PHP 8.1
 docker compose --profile php81 up -d
+
+# PHP 5.6 heredado
+docker compose --profile php56 up -d
 
 # Apache con PHP 8.5
 docker compose --profile apache up -d --build
