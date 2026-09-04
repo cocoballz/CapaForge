@@ -11,7 +11,13 @@ docker compose --profile web up -d
 
 # Perfiles de compatibilidad cuando se necesiten
 docker compose --profile php53 --profile php71 --profile php81 up -d
+
+# PHP 5.6 con una aplicación que conserva localhost:3306 y MySQL de XAMPP
+# Primero inicie MySQL en XAMPP.
+docker compose --profile web --profile php56 --profile xampp-db up -d --build
 ```
+
+El perfil `xampp-db` no inicia ni modifica MySQL de Docker. Crea un puente privado desde el `localhost:3306` del contenedor PHP 5.6 hacia `host.docker.internal:3306`, que corresponde a la máquina Windows. Es útil para aplicaciones legadas que tienen esa conexión escrita en el código.
 
 ## Registros
 
@@ -33,8 +39,8 @@ Este comando no borra los datos de las bases. `docker compose down -v` sí borra
 
 | Servicio | Host | Puerto |
 |---|---|---:|
-| Postgres | `localhost` | 5432 |
-| MySQL | `localhost` | 3306 |
-| Redis | `localhost` | 6379 |
+| Postgres | `localhost` | 8520 |
+| MySQL | `localhost` | 8521 |
+| Redis | `localhost` | 8522 |
 
 Use las credenciales definidas en `.env`. Las contraseñas no deben versionarse en Git.

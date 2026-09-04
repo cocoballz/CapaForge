@@ -2,6 +2,8 @@
 
 CapaForge es una plataforma local de capa media para ejecutar aplicaciones PHP y Java con servicios web y datos aislados. Docker Compose agrupa los componentes en un único proyecto, pero cada servicio se ejecuta en su propio contenedor.
 
+**English:** see the [English quick-start guide](README.en.md).
+
 El código de las aplicaciones sigue estando en Windows; Docker lo monta como una carpeta compartida. Esto permite cambiar archivos sin reconstruir imágenes.
 
 ## Contenido
@@ -28,10 +30,10 @@ El código de las aplicaciones sigue estando en Windows; Docker lo monta como un
    PROJECTS_ROOT=C:/Trabajo/proyectos
    ```
 
-4. Inicie servicios de datos y PHP 8.5 con Nginx:
+4. Inicie Nginx y PHP 8.5:
 
    ```powershell
-   docker compose --profile data --profile web up -d
+docker compose --profile data --profile web up -d
    ```
 
 5. Consulte el estado:
@@ -55,6 +57,24 @@ C:\Trabajo\proyectos\
     └── deployments\
 ```
 
+Para PHP 5.6 use `docker compose --profile web --profile php56 up -d`. El puerto selecciona PHP y la ruta selecciona el proyecto: `http://localhost:8501/mi-proyecto` usa Nginx + PHP 5.6. No se usan subdominios.
+
+Si una aplicación legada ya usa `localhost:3306` y su base está en XAMPP de Windows, inicie MySQL en XAMPP y use el puente opcional, sin modificar el código ni sus credenciales:
+
+```powershell
+docker compose --profile web --profile php56 --profile xampp-db up -d --build
+```
+
+El perfil `xampp-db` ofrece un socket privado compatible con conexiones legadas a `localhost:3306` y lo redirige a `host.docker.internal:3306` (MySQL de Windows). No publica un puerto nuevo en Windows y no usa el MySQL de Docker.
+
+Si una aplicación legada ya usa `localhost:3306` y su base está en XAMPP de Windows, inicie MySQL en XAMPP y use el puente opcional, sin modificar el código ni sus credenciales:
+
+```powershell
+docker compose --profile web --profile php56 --profile xampp-db up -d --build
+```
+
+El perfil `xampp-db` solo abre el puerto 3306 dentro del contenedor PHP 5.6 y lo redirige a `host.docker.internal:3306` (MySQL de Windows). No publica un puerto nuevo en Windows y no usa el MySQL de Docker.
+
 Dentro de los contenedores, esa carpeta se ve como `/var/www`. La carpeta `projects/` incluida en este repositorio contiene ejemplos y puede conservarse como referencia; no es obligatorio almacenar allí los proyectos reales.
 
 Consulte [Proyectos y rutas](docs/02-proyectos-y-rutas.md) para la convención `index.php` / `public/index.php` y el diseño por puertos.
@@ -69,6 +89,17 @@ Consulte [Proyectos y rutas](docs/02-proyectos-y-rutas.md) para la convención `
 | Herramientas | Workspace Alpine | `workspace` |
 | Java moderno | WildFly 35 con JDK 17 | `java` |
 | Java legado | JBoss AS 7.1.1.Final | pendiente de empaquetar con la distribución autorizada |
+
+### Puertos HTTP
+
+| PHP | Nginx | Apache |
+|---|---:|---:|
+| 5.3 | 8500 | 8510 |
+| 5.6 | 8501 | 8511 |
+| 7.1 | 8502 | 8512 |
+| 7.4 | 8503 | 8513 |
+| 8.1 | 8504 | 8514 |
+| 8.5 | 8505 | 8515 |
 
 Ejemplos:
 
@@ -102,6 +133,7 @@ docker compose exec workspace sh
 | [Java/JBoss legado](docker/java/jboss-as-7.1.1/README.md) | Requisitos para contenerizar JBoss AS 7.1.1.Final de forma segura. |
 | [WildFly moderno](docker/java/wildfly/README.md) | Alcance del perfil Java actual. |
 | [Datos persistentes](docker/data/README.md) | Volúmenes, credenciales y persistencia. |
+| [Guía en inglés](README.en.md) | Instalación, perfiles, proyectos y puertos para clientes en inglés. |
 
 ## Operación
 

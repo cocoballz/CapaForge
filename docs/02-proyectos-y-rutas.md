@@ -1,55 +1,49 @@
-# Proyectos y rutas
+# Proyectos, rutas y puertos
 
-## Carpeta raíz dinámica
+## Carpeta de código
 
-La variable `PROJECTS_ROOT` del archivo `.env` indica dónde están todos los proyectos. Puede cambiarse sin editar `compose.yaml`.
+La variable `PROJECTS_ROOT` de `.env` es dinámica. Puede apuntar a cualquier ruta local, por ejemplo:
 
 ```env
-PROJECTS_ROOT=C:/Trabajo/proyectos
+PROJECTS_ROOT=D:/Develop/projects
 ```
 
-Esa ruta se monta dentro de los servicios web como `/var/www`.
+Cada subcarpeta representa un proyecto. Esa carpeta se monta como `/var/www` en los contenedores.
 
 ```text
-C:\Trabajo\proyectos\sistema1  ->  /var/www/sistema1
+D:\Develop\projects\
+├── ci-php\
+│   └── index.php
+└── portal-moderno\
+    └── public\
+        └── index.php
 ```
 
-Después de cambiarla, recree los servicios que montan el código:
+CapaForge busca primero `<proyecto>/index.php`; si no existe, busca `<proyecto>/public/index.php`. Los cambios que haga en Windows se ven inmediatamente: no hay que copiar ni reconstruir el proyecto PHP.
+
+## El puerto selecciona PHP
+
+No se usan subdominios. El puerto selecciona la versión de PHP y el primer segmento de la URL selecciona el proyecto.
+
+| PHP | Nginx | Apache |
+|---|---|---|
+| 5.3 | `http://localhost:8500` | `http://localhost:8510` |
+| 5.6 | `http://localhost:8501` | `http://localhost:8511` |
+| 7.1 | `http://localhost:8502` | `http://localhost:8512` |
+| 7.4 | `http://localhost:8503` | `http://localhost:8513` |
+| 8.1 | `http://localhost:8504` | `http://localhost:8514` |
+| 8.5 | `http://localhost:8505` | `http://localhost:8515` |
+
+Ejemplos para un proyecto `ci-php`:
+
+```text
+http://localhost:8501/ci-php  → Nginx + PHP 5.6
+http://localhost:8505/ci-php  → Nginx + PHP 8.5
+http://localhost:8511/ci-php  → Apache + PHP 5.6
+```
+
+Antes de abrir una URL, inicie el perfil PHP correspondiente. Por ejemplo, para PHP 5.6 con Nginx:
 
 ```powershell
-docker compose --profile web --profile apache up -d
+docker compose --profile web --profile php56 up -d
 ```
-
-## Convención de punto de entrada
-
-Para evitar configurar cada proyecto individualmente, todos deben usar una de estas dos formas:
-
-```text
-C:\Trabajo\proyectos\sistema1\index.php
-```
-
-o, para Laravel y aplicaciones similares:
-
-```text
-C:\Trabajo\proyectos\sistema1\public\index.php
-```
-
-El enrutador web puede resolver dinámicamente en este orden:
-
-1. `sistema1/index.php`.
-2. Si no existe, `sistema1/public/index.php`.
-
-Esto permite usar la misma URL base, `http://localhost:PUERTO/sistema1`, sin crear un VirtualHost por aplicación. Los proyectos que no respeten una de esas convenciones sí requerirán una regla específica.
-
-## Puertos por versión
-
-La alternativa recomendada para comparar la misma aplicación es usar un puerto por PHP, no un puerto por proyecto:
-
-| Puerto propuesto | PHP-FPM | Ejemplo |
-|---:|---|---|
-| 8080 | PHP 5.3 | `http://localhost:8080/sistema1` |
-| 8081 | PHP 7.1 | `http://localhost:8081/sistema1` |
-| 8085 | PHP 8.1 | `http://localhost:8085/sistema1` |
-| 8089 | PHP 8.5 | `http://localhost:8089/sistema1` |
-
-La ruta identifica el proyecto y el puerto escoge el intérprete. El mismo `sistema1` puede ejecutarse con dos versiones para apoyar una migración.

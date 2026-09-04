@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CapaForge</title>
+  <style>
+    body { background: #101827; color: #e5e7eb; font: 16px/1.55 system-ui, sans-serif; margin: 0; }
+    main { max-width: 850px; margin: 6vh auto; padding: 2rem; }
+    h1, h2 { color: #60a5fa; } code { background: #1f2937; border-radius: .25rem; padding: .15rem .35rem; }
+    table { border-collapse: collapse; width: 100%; } th, td { border-bottom: 1px solid #374151; padding: .45rem; text-align: left; }
+    .example { background: #172033; padding: 1rem; border-left: 3px solid #60a5fa; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>CapaForge · Local middleware is active</h1>
+
+    <h2>Español</h2>
+    <p>El <strong>puerto</strong> selecciona la versión de PHP y la <strong>ruta</strong> selecciona el proyecto. No se requieren subdominios ni cambios en el archivo <code>hosts</code>.</p>
+    <p class="example">Ejemplo: <code>http://localhost:8501/ci-php</code> ejecuta el proyecto <code>ci-php</code> con PHP 5.6 mediante Nginx.</p>
+    <table><tr><th>Nginx</th><th>Apache</th><th>PHP</th></tr>
+      <tr><td>8500</td><td>8510</td><td>5.3</td></tr><tr><td>8501</td><td>8511</td><td>5.6</td></tr>
+      <tr><td>8502</td><td>8512</td><td>7.1</td></tr><tr><td>8503</td><td>8513</td><td>7.4</td></tr>
+      <tr><td>8504</td><td>8514</td><td>8.1</td></tr><tr><td>8505</td><td>8515</td><td>8.5</td></tr>
+    </table>
+    <p>Para iniciar Nginx y PHP 5.6: <code>docker compose --profile web --profile php56 up -d</code>.</p>
+    <p>El código debe estar dentro de la carpeta configurada en <code>PROJECTS_ROOT</code>.</p>
+
+    <h2>English</h2>
+    <p>The <strong>port</strong> selects the PHP version and the <strong>path</strong> selects the project. No subdomains or <code>hosts</code> file changes are required.</p>
+    <p class="example">Example: <code>http://localhost:8501/ci-php</code> runs the <code>ci-php</code> project with PHP 5.6 through Nginx.</p>
+    <p>To start Nginx and PHP 5.6: <code>docker compose --profile web --profile php56 up -d</code>.</p>
+    <p>Place source code inside the folder configured in <code>PROJECTS_ROOT</code>.</p>
+  </main>
+</body>
+</html>

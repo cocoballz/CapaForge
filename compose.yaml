@@ -5,19 +5,32 @@ services:
     image: nginx:1.27-alpine
     profiles: [web]
     ports:
-      - "8080:80"
+      - "8500:8500"
+      - "8501:8501"
+      - "8502:8502"
+      - "8503:8503"
+      - "8504:8504"
+      - "8505:8505"
     volumes:
       - ${PROJECTS_ROOT:-./projects}:/var/www:ro
       - ./docker/web/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/web/nginx/capaforge-projects.conf:/etc/nginx/conf.d/capaforge-projects.inc:ro
+      - ./docker/web/welcome:/usr/share/nginx/html:ro
     depends_on:
       - php-fpm-8.5
 
   apache:
     build:
-      context: ./docker/web/apache
+      context: ./docker/web
+      dockerfile: apache/Dockerfile
     profiles: [apache]
     ports:
-      - "8081:80"
+      - "8510:8510"
+      - "8511:8511"
+      - "8512:8512"
+      - "8513:8513"
+      - "8514:8514"
+      - "8515:8515"
     volumes:
       - ${PROJECTS_ROOT:-./projects}:/var/www:ro
     depends_on:
@@ -63,13 +76,31 @@ services:
     profiles: [php56, legacy]
     volumes:
       - ${PROJECTS_ROOT:-./projects}:/var/www
-      - ./docker/php/php-fpm-5.6/php.ini:/usr/local/etc/php/conf.d/99-capaforge.ini:ro
+      # This image loads xxx/zzz defaults, so CapaForge must load last.
+      - ./docker/php/php-fpm-5.6/php.ini:/usr/local/etc/php/conf.d/zzzz-capaforge.ini:ro
+      - ./docker/php/php-fpm-5.6/prepend.php:/opt/capaforge/prepend.php:ro
+      - xampp-mysql-socket:/tmp/capaforge
+
+  # Optional compatibility bridge: legacy code may keep using localhost:3306
+  # while MySQL actually runs in XAMPP on the Windows host.
+  xampp-mysql-php56:
+    build:
+      context: ./docker/network/xampp-mysql-proxy
+    profiles: [xampp-db]
+    network_mode: service:php-fpm-5.6
+    depends_on:
+      php-fpm-5.6:
+        condition: service_started
+    volumes:
+      - xampp-mysql-socket:/tmp/capaforge
+    command: ["UNIX-LISTEN:/tmp/capaforge/mysql.sock,fork,mode=666", "TCP:host.docker.internal:3306"]
+    restart: unless-stopped
 
   postgres:
     image: ${POSTGRES_IMAGE:-postgres:16-alpine}
     profiles: [data]
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:8520:5432"
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-app}
       POSTGRES_USER: ${POSTGRES_USER:-app}
@@ -86,7 +117,7 @@ services:
     image: ${REDIS_IMAGE:-redis:7-alpine}
     profiles: [data]
     ports:
-      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:8522:6379"
     volumes:
       - redis-data:/data
     healthcheck:
@@ -99,7 +130,7 @@ services:
     image: ${MYSQL_IMAGE:-mysql:8.4}
     profiles: [data]
     ports:
-      - "127.0.0.1:3306:3306"
+      - "127.0.0.1:8521:3306"
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-app}
       MYSQL_USER: ${MYSQL_USER:-app}
@@ -126,8 +157,8 @@ services:
     image: quay.io/wildfly/wildfly:35.0.1.Final-jdk17
     profiles: [java]
     ports:
-      - "8082:8080"
-      - "9990:9990"
+      - "8530:8080"
+      - "8531:9990"
     volumes:
       - ./projects/java/deployments:/opt/wildfly/standalone/deployments
     command: ["/opt/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
@@ -136,3 +167,4 @@ volumes:
   postgres-data:
   redis-data:
   mysql-data:
+  xampp-mysql-socket:
